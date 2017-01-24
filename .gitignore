@@ -1,0 +1,11 @@
+vendor/
+glide.lock
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+.idea
+*.iml
