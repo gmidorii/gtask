@@ -4,10 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 )
+
+var cyan = "\u001b[36m"
+var reset = "\u001b[0m"
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -22,19 +26,26 @@ func main() {
 	// set flag
 	var t string
 	var d string
+	var i bool
 	flag.StringVar(&t, "t", "Task", "task title")
 	flag.StringVar(&d, "d", "2017-01-24", "deadline")
+	flag.BoolVar(&i, "i", false, "insert")
 	flag.Parse()
 
 	tasks, err := readTask()
 	if err != nil {
 		log.Fatal(err)
 	}
-	appendTask(&tasks, t, d)
 
-	writeTask(tasks)
-	if err != nil {
-		log.Fatal(err)
+	if i {
+		appendTask(&tasks, t, d)
+
+		writeTask(tasks)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		printTasks(tasks)
 	}
 }
 
@@ -81,4 +92,18 @@ func writeTask(tasks Tasks) error {
 		return err
 	}
 	return writer.Flush()
+}
+
+func printTasks(tasks Tasks) {
+	fmt.Println("-------------")
+	fmt.Print("|")
+	fmt.Print(cyan + "task" + reset)
+	fmt.Print("|")
+	fmt.Print(cyan + "date" + reset)
+	fmt.Println("|")
+	fmt.Println("-------------")
+	for _, v := range tasks.Tasks {
+		fmt.Println("|" + v.Title + " | " + v.DeadLine + "|")
+	}
+	fmt.Println("-------------")
 }
