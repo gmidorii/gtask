@@ -12,3 +12,6 @@ Icon
 
 # build file
 gtask
+
+tasks/*
+!.gitkeep

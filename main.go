@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 )
 
 var cyan = "\u001b[36m"
@@ -18,15 +19,18 @@ type Tasks struct {
 }
 
 type Task struct {
+	Id       int    `json:"id"`
 	Title    string `json:"title"`
 	DeadLine string `json:"dead_line"`
 }
 
 func main() {
 	// set flag
-	var t string
-	var d string
-	var i bool
+	var (
+		t string
+		d string
+		i bool
+	)
 	flag.StringVar(&t, "t", "Task", "task title")
 	flag.StringVar(&d, "d", "2017-01-24", "deadline")
 	flag.BoolVar(&i, "i", false, "insert")
@@ -67,7 +71,14 @@ func readTask() (Tasks, error) {
 }
 
 func appendTask(tasks *Tasks, title string, deadline string) {
+	var id int
+	if taskSlice := tasks.Tasks; len(taskSlice) != 0 {
+		id = tasks.Tasks[len(tasks.Tasks)-1].Id + 1
+	} else {
+		id = 1
+	}
 	task := Task{
+		Id:       id,
 		Title:    title,
 		DeadLine: deadline,
 	}
@@ -97,13 +108,15 @@ func writeTask(tasks Tasks) error {
 func printTasks(tasks Tasks) {
 	fmt.Println("-------------")
 	fmt.Print("|")
+	fmt.Print(cyan + "id" + reset)
+	fmt.Print("|")
 	fmt.Print(cyan + "task" + reset)
 	fmt.Print("|")
 	fmt.Print(cyan + "date" + reset)
 	fmt.Println("|")
 	fmt.Println("-------------")
 	for _, v := range tasks.Tasks {
-		fmt.Println("|" + v.Title + " | " + v.DeadLine + "|")
+		fmt.Println("|" + strconv.Itoa(v.Id) + "|" + v.Title + " | " + v.DeadLine + "|")
 	}
 	fmt.Println("-------------")
 }
