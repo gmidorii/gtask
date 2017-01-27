@@ -84,6 +84,9 @@ func appendTask(tasks *Tasks, title string, deadline string) {
 	}
 
 	tasks.Tasks = append(tasks.Tasks, task)
+	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
+	fmt.Println(colorString(cyan, "title: ") + title)
+	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
 
 func writeTask(tasks Tasks) error {
@@ -119,4 +122,8 @@ func printTasks(tasks Tasks) {
 		fmt.Println("|" + strconv.Itoa(v.Id) + "|" + v.Title + " | " + v.DeadLine + "|")
 	}
 	fmt.Println("-------------")
+}
+
+func colorString(color string, v string) string {
+	return color + v + reset
 }
