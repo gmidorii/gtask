@@ -9,9 +9,12 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"errors"
 )
 
 var cyan = "\u001b[36m"
+var red = "\u001b[31m"
+var blue = "\u001b[34m"
 var reset = "\u001b[0m"
 
 type Tasks struct {
@@ -27,13 +30,17 @@ type Task struct {
 func main() {
 	// set flag
 	var (
-		t string
-		d string
-		i bool
+		task string
+		date string
+		id   int
+		i    bool
+		d    bool
 	)
-	flag.StringVar(&t, "t", "Task", "task title")
-	flag.StringVar(&d, "d", "2017-01-24", "deadline")
+	flag.StringVar(&task, "task", "Task", "task title")
+	flag.StringVar(&date, "date", "2017-01-24", "deadline")
+	flag.IntVar(&id, "id", 1, "id")
 	flag.BoolVar(&i, "i", false, "insert")
+	flag.BoolVar(&d, "d", false, "delete")
 	flag.Parse()
 
 	tasks, err := readTask()
@@ -42,10 +49,14 @@ func main() {
 	}
 
 	if i {
-		appendTask(&tasks, t, d)
+		appendTask(&tasks, task, date)
 
 		writeTask(tasks)
 		if err != nil {
+			log.Fatal(err)
+		}
+	} else if d {
+		if err = rmTask(id, tasks.Tasks); err != nil {
 			log.Fatal(err)
 		}
 	} else {
@@ -84,9 +95,8 @@ func appendTask(tasks *Tasks, title string, deadline string) {
 	}
 
 	tasks.Tasks = append(tasks.Tasks, task)
-	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
-	fmt.Println(colorString(cyan, "title: ") + title)
-	fmt.Println(colorString(cyan, "date:  ") + deadline)
+	fmt.Println(colorString(blue, "-- Append --"))
+	printOneTask(id, title, deadline)
 }
 
 func writeTask(tasks Tasks) error {
@@ -126,4 +136,26 @@ func printTasks(tasks Tasks) {
 
 func colorString(color string, v string) string {
 	return color + v + reset
+}
+
+func rmTask(id int, tasks []Task) error {
+	newTasks := make([]Task, 0, 0)
+	for _, v := range tasks {
+		if id != v.Id {
+			newTasks = append(newTasks, v)
+			continue
+		}
+		fmt.Println(colorString(red, "-- REMOVE --"))
+		printOneTask(v.Id, v.Title, v.DeadLine)
+	}
+	if len(tasks) == len(newTasks) {
+		return errors.New("Not found id: " + strconv.Itoa(id))
+	}
+	return writeTask(Tasks{newTasks})
+}
+
+func printOneTask(id int, title string, deadline string) {
+	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
+	fmt.Println(colorString(cyan, "title: ") + title)
+	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
