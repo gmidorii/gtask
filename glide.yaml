@@ -1,2 +1,4 @@
 package: github.com/midorigreen/gtask
-import: []
+import:
+- package: github.com/mattn/go-runewidth
+  version: ~0.0.1

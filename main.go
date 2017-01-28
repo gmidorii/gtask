@@ -3,19 +3,23 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
-	"errors"
+
+	"github.com/mattn/go-runewidth"
 )
 
 var cyan = "\u001b[36m"
 var red = "\u001b[31m"
 var blue = "\u001b[34m"
 var reset = "\u001b[0m"
+
+var taskfile = "./tasks/task.json"
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -43,7 +47,7 @@ func main() {
 	flag.BoolVar(&d, "d", false, "delete")
 	flag.Parse()
 
-	tasks, err := readTask()
+	tasks, err := readTask(taskfile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,8 +68,8 @@ func main() {
 	}
 }
 
-func readTask() (Tasks, error) {
-	fp, err := os.Open("./tasks/task.json")
+func readTask(file string) (Tasks, error) {
+	fp, err := os.Open(file)
 	if err != nil {
 		return Tasks{}, err
 	}
@@ -119,19 +123,19 @@ func writeTask(tasks Tasks) error {
 }
 
 func printTasks(tasks Tasks) {
-	fmt.Println("-------------")
-	fmt.Print("|")
-	fmt.Print(cyan + "id" + reset)
-	fmt.Print("|")
-	fmt.Print(cyan + "task" + reset)
-	fmt.Print("|")
-	fmt.Print(cyan + "date" + reset)
+	fmt.Println("----------------------------------")
+	fmt.Print("|" + cyan + TruncateFillRight("id", 3) + reset + "|")
+	fmt.Print(cyan + TruncateFillRight("task", 12) + reset + "|")
+	fmt.Print(cyan + TruncateFillRight("task", 15) + reset)
 	fmt.Println("|")
-	fmt.Println("-------------")
+	fmt.Println("----------------------------------")
 	for _, v := range tasks.Tasks {
-		fmt.Println("|" + strconv.Itoa(v.Id) + "|" + v.Title + " | " + v.DeadLine + "|")
+		fmt.Print("|" + TruncateFillRight(strconv.Itoa(v.Id), 3))
+		fmt.Print("|" + TruncateFillRight(v.Title, 12))
+		fmt.Print("|" + TruncateFillRight(v.DeadLine, 15))
+		fmt.Println("|")
 	}
-	fmt.Println("-------------")
+	fmt.Println("----------------------------------")
 }
 
 func colorString(color string, v string) string {
@@ -158,4 +162,9 @@ func printOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
 	fmt.Println(colorString(cyan, "title: ") + title)
 	fmt.Println(colorString(cyan, "date:  ") + deadline)
+}
+
+func TruncateFillRight(s string, w int) string {
+	s = runewidth.Truncate(s, w, "..")
+	return runewidth.FillRight(s, w)
 }
