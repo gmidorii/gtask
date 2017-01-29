@@ -40,11 +40,13 @@ func main() {
 		i    bool
 		d    bool
 	)
+	// mode
+	flag.BoolVar(&i, "i", false, "insert")
+	flag.BoolVar(&d, "d", false, "delete")
+	// task detail
 	flag.StringVar(&task, "task", "Task", "task title")
 	flag.StringVar(&date, "date", "2017-01-24", "deadline")
 	flag.IntVar(&id, "id", 1, "id")
-	flag.BoolVar(&i, "i", false, "insert")
-	flag.BoolVar(&d, "d", false, "delete")
 	flag.Parse()
 
 	tasks, err := readTask(taskfile)
