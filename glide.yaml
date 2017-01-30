@@ -2,3 +2,5 @@ package: github.com/midorigreen/gtask
 import:
 - package: github.com/mattn/go-runewidth
   version: ~0.0.1
+- package: github.com/urfave/cli
+  version: ^1.19.1

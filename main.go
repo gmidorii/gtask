@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/mattn/go-runewidth"
+	"github.com/urfave/cli"
 )
 
 var cyan = "\u001b[36m"
@@ -49,10 +50,35 @@ func main() {
 	flag.IntVar(&id, "id", 1, "id")
 	flag.Parse()
 
+	app := cli.NewApp()
+
+	app.Name = "gtask"
+	app.Usage = "Task management"
+	app.Version = "0.1"
+
 	tasks, err := readTask(taskfile)
 	if err != nil {
 		log.Fatal(err)
 	}
+	app.Commands = []cli.Command{
+		{
+			Name:    "in",
+			Aliases: []string{"task", "date"},
+			Usage:   "add Task",
+			Action: func(c *cli.Context) error {
+				task := c.Args().Get(0)
+				date := c.Args().Get(0)
+				appendTask(&tasks, task, date)
+
+				writeTask(tasks)
+				if err != nil {
+					return err
+				}
+				return nil
+			},
+		},
+	}
+	app.Run(os.Args)
 
 	if i {
 		appendTask(&tasks, task, date)
