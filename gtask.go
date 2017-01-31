@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -33,25 +32,14 @@ type Task struct {
 }
 
 func main() {
-	// set flag
-	var (
-		task string
-		date string
-		id   int
-		i    bool
-		d    bool
-	)
-	// mode
-	flag.BoolVar(&i, "i", false, "insert")
-	flag.BoolVar(&d, "d", false, "delete")
-	// task detail
-	flag.StringVar(&task, "task", "Task", "task title")
-	flag.StringVar(&date, "date", "2017-01-24", "deadline")
-	flag.IntVar(&id, "id", 1, "id")
-	flag.Parse()
+	// Flag
+	var fTask string
+	var fDate string
+	var fId int
 
 	app := cli.NewApp()
 
+	// App info
 	app.Name = "gtask"
 	app.Usage = "Task management"
 	app.Version = "0.1"
@@ -62,13 +50,22 @@ func main() {
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:    "in",
-			Aliases: []string{"task", "date"},
-			Usage:   "add Task",
+			Name:  "in",
+			Usage: "add Task",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "t",
+					Value:       "Task",
+					Destination: &fTask,
+				},
+				cli.StringFlag{
+					Name:        "d",
+					Value:       "Task",
+					Destination: &fDate,
+				},
+			},
 			Action: func(c *cli.Context) error {
-				task := c.Args().Get(0)
-				date := c.Args().Get(0)
-				appendTask(&tasks, task, date)
+				appendTask(&tasks, fTask, fDate)
 
 				writeTask(tasks)
 				if err != nil {
@@ -77,23 +74,33 @@ func main() {
 				return nil
 			},
 		},
+		{
+			Name:  "del",
+			Usage: "Delete Task",
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:        "i",
+					Usage:       "id",
+					Destination: &fId,
+				},
+			},
+			Action: func(c *cli.Context) error {
+				if err = rmTask(fId, tasks.Tasks); err != nil {
+					return err
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "print",
+			Usage: "Print Task",
+			Action: func(c *cli.Context) error {
+				printTasks(tasks)
+				return nil
+			},
+		},
 	}
 	app.Run(os.Args)
-
-	if i {
-		appendTask(&tasks, task, date)
-
-		writeTask(tasks)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else if d {
-		if err = rmTask(id, tasks.Tasks); err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		printTasks(tasks)
-	}
 }
 
 func readTask(file string) (Tasks, error) {
@@ -132,7 +139,7 @@ func appendTask(tasks *Tasks, title string, deadline string) {
 }
 
 func writeTask(tasks Tasks) error {
-	fp, err := os.Create("./tasks/task.json")
+	fp, err := os.Create(taskfile)
 	if err != nil {
 		return err
 	}
