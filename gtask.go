@@ -12,6 +12,7 @@ import (
 
 	"github.com/mattn/go-runewidth"
 	"github.com/urfave/cli"
+	"time"
 )
 
 var cyan = "\u001b[36m"
@@ -60,7 +61,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:        "d",
-					Value:       "Task",
+					Value:       time.Now().String(),
 					Destination: &fDate,
 				},
 			},
