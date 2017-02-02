@@ -10,9 +10,10 @@ import (
 	"os"
 	"strconv"
 
+	"time"
+
 	"github.com/mattn/go-runewidth"
 	"github.com/urfave/cli"
-	"time"
 )
 
 var cyan = "\u001b[36m"
@@ -21,6 +22,12 @@ var blue = "\u001b[34m"
 var reset = "\u001b[0m"
 
 var taskfile = "./tasks/task.json"
+
+var (
+	idNum   = 3
+	taskNum = 35
+	dateNum = 15
+)
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -61,7 +68,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:        "d",
-					Value:       time.Now().String(),
+					Value:       genareteDate(3, "2006/01/02"),
 					Destination: &fDate,
 				},
 			},
@@ -159,19 +166,26 @@ func writeTask(tasks Tasks) error {
 }
 
 func printTasks(tasks Tasks) {
-	fmt.Println("----------------------------------")
-	fmt.Print("|" + cyan + TruncateFillRight("id", 3) + reset + "|")
-	fmt.Print(cyan + TruncateFillRight("task", 12) + reset + "|")
-	fmt.Print(cyan + TruncateFillRight("task", 15) + reset)
+	printLine(idNum + taskNum + dateNum + 4)
+	fmt.Print("|" + cyan + truncateFillRight("id", idNum) + reset + "|")
+	fmt.Print(cyan + truncateFillRight("task", taskNum) + reset + "|")
+	fmt.Print(cyan + truncateFillRight("date", dateNum) + reset)
 	fmt.Println("|")
-	fmt.Println("----------------------------------")
+	printLine(idNum + taskNum + dateNum + 4)
 	for _, v := range tasks.Tasks {
-		fmt.Print("|" + TruncateFillRight(strconv.Itoa(v.Id), 3))
-		fmt.Print("|" + TruncateFillRight(v.Title, 12))
-		fmt.Print("|" + TruncateFillRight(v.DeadLine, 15))
+		fmt.Print("|" + truncateFillRight(strconv.Itoa(v.Id), idNum))
+		fmt.Print("|" + truncateFillRight(v.Title, taskNum))
+		fmt.Print("|" + truncateFillRight(v.DeadLine, dateNum))
 		fmt.Println("|")
 	}
-	fmt.Println("----------------------------------")
+	printLine(idNum + taskNum + dateNum + 4)
+}
+
+func printLine(num int) {
+	for i := 0; i < num; i++ {
+		fmt.Print("-")
+	}
+	fmt.Println()
 }
 
 func colorString(color string, v string) string {
@@ -200,7 +214,12 @@ func printOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
 
-func TruncateFillRight(s string, w int) string {
+func truncateFillRight(s string, w int) string {
 	s = runewidth.Truncate(s, w, "..")
 	return runewidth.FillRight(s, w)
+}
+
+func genareteDate(plusDays int, layout string) string {
+	now := time.Now().AddDate(0, 0, plusDays)
+	return now.Format(layout)
 }
