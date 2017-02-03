@@ -16,10 +16,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-var cyan = "\u001b[36m"
-var red = "\u001b[31m"
-var blue = "\u001b[34m"
-var reset = "\u001b[0m"
+// console color
+const cyan = "\u001b[36m"
+const red = "\u001b[31m"
+const blue = "\u001b[34m"
+const reset = "\u001b[0m"
+
+// Date Layout
+const layout = "2006/01/02"
 
 var taskfile = "./tasks/task.json"
 
@@ -68,7 +72,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:        "d",
-					Value:       genareteDate(3, "2006/01/02"),
+					Value:       generateDate(3, layout),
 					Destination: &fDate,
 				},
 			},
@@ -100,7 +104,7 @@ func main() {
 			},
 		},
 		{
-			Name:  "print",
+			Name:  "p",
 			Usage: "Print Task",
 			Action: func(c *cli.Context) error {
 				printTasks(tasks)
@@ -219,7 +223,7 @@ func truncateFillRight(s string, w int) string {
 	return runewidth.FillRight(s, w)
 }
 
-func genareteDate(plusDays int, layout string) string {
+func generateDate(plusDays int, layout string) string {
 	now := time.Now().AddDate(0, 0, plusDays)
 	return now.Format(layout)
 }
