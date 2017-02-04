@@ -25,28 +25,36 @@ const reset = "\u001b[0m"
 // Date Layout
 const layout = "2006/01/02"
 
+// Completed
+const comp = "o"
+const notComp = "-"
+
 var taskfile = "./tasks/task.json"
 
 var (
-	idNum   = 3
-	taskNum = 35
-	dateNum = 15
+	idNum        = 3
+	taskNum      = 35
+	dateNum      = 15
+	completedNum = 3
 )
+
+var lineNum = idNum + taskNum + dateNum + completedNum + 5
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
 }
 
 type Task struct {
-	Id       int    `json:"id"`
-	Title    string `json:"title"`
-	DeadLine string `json:"dead_line"`
+	Id        int    `json:"id"`
+	Title     string `json:"title"`
+	DeadLine  string `json:"dead_line"`
+	Completed bool   `json:"completed"`
 }
 
 func main() {
 	// Flag
 	var fTask string
-	var fDate string
+	var fDays int
 	var fId int
 
 	app := cli.NewApp()
@@ -70,14 +78,19 @@ func main() {
 					Value:       "Task",
 					Destination: &fTask,
 				},
-				cli.StringFlag{
+				cli.IntFlag{
 					Name:        "d",
-					Value:       generateDate(3, layout),
-					Destination: &fDate,
+					Value:       -1,
+					Destination: &fDays,
 				},
 			},
 			Action: func(c *cli.Context) error {
-				appendTask(&tasks, fTask, fDate)
+				if fDays == -1 {
+					// default day is (plus) 3
+					fDays = 3
+				}
+				date := generateDate(fDays, layout)
+				appendTask(&tasks, fTask, date)
 
 				writeTask(tasks)
 				if err != nil {
@@ -140,9 +153,10 @@ func appendTask(tasks *Tasks, title string, deadline string) {
 		id = 1
 	}
 	task := Task{
-		Id:       id,
-		Title:    title,
-		DeadLine: deadline,
+		Id:        id,
+		Title:     title,
+		DeadLine:  deadline,
+		Completed: false,
 	}
 
 	tasks.Tasks = append(tasks.Tasks, task)
@@ -170,19 +184,25 @@ func writeTask(tasks Tasks) error {
 }
 
 func printTasks(tasks Tasks) {
-	printLine(idNum + taskNum + dateNum + 4)
+	printLine(lineNum)
 	fmt.Print("|" + cyan + truncateFillRight("id", idNum) + reset + "|")
-	fmt.Print(cyan + truncateFillRight("task", taskNum) + reset + "|")
-	fmt.Print(cyan + truncateFillRight("date", dateNum) + reset)
+	fmt.Print(cyan + truncateFillRight("title", taskNum) + reset + "|")
+	fmt.Print(cyan + truncateFillRight("date", dateNum) + reset + "|")
+	fmt.Print(cyan + truncateFillRight("c", completedNum) + reset)
 	fmt.Println("|")
-	printLine(idNum + taskNum + dateNum + 4)
+	printLine(lineNum)
 	for _, v := range tasks.Tasks {
 		fmt.Print("|" + truncateFillRight(strconv.Itoa(v.Id), idNum))
 		fmt.Print("|" + truncateFillRight(v.Title, taskNum))
 		fmt.Print("|" + truncateFillRight(v.DeadLine, dateNum))
+		if v.Completed {
+			fmt.Print("|" + truncateFillRight(comp, completedNum))
+		} else {
+			fmt.Print("|" + truncateFillRight(notComp, completedNum))
+		}
 		fmt.Println("|")
 	}
-	printLine(idNum + taskNum + dateNum + 4)
+	printLine(lineNum)
 }
 
 func printLine(num int) {
