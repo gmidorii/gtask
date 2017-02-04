@@ -56,6 +56,7 @@ func main() {
 	var fTask string
 	var fDays int
 	var fId int
+	var fComp bool
 
 	app := cli.NewApp()
 
@@ -100,8 +101,8 @@ func main() {
 			},
 		},
 		{
-			Name:  "del",
-			Usage: "Delete Task",
+			Name:  "fi",
+			Usage: "finished task",
 			Flags: []cli.Flag{
 				cli.IntFlag{
 					Name:        "i",
@@ -110,7 +111,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				if err = rmTask(fId, tasks.Tasks); err != nil {
+				if err = completeTask(fId, tasks.Tasks); err != nil {
 					return err
 				}
 				return nil
@@ -119,8 +120,15 @@ func main() {
 		{
 			Name:  "p",
 			Usage: "Print Task",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:        "c",
+					Usage:       "completed flag",
+					Destination: &fComp,
+				},
+			},
 			Action: func(c *cli.Context) error {
-				printTasks(tasks)
+				printTasks(tasks, fComp)
 				return nil
 			},
 		},
@@ -183,7 +191,7 @@ func writeTask(tasks Tasks) error {
 	return writer.Flush()
 }
 
-func printTasks(tasks Tasks) {
+func printTasks(tasks Tasks, completed bool) {
 	printLine(lineNum)
 	fmt.Print("|" + cyan + truncateFillRight("id", idNum) + reset + "|")
 	fmt.Print(cyan + truncateFillRight("title", taskNum) + reset + "|")
@@ -192,6 +200,9 @@ func printTasks(tasks Tasks) {
 	fmt.Println("|")
 	printLine(lineNum)
 	for _, v := range tasks.Tasks {
+		if completed == false && v.Completed == true {
+			continue
+		}
 		fmt.Print("|" + truncateFillRight(strconv.Itoa(v.Id), idNum))
 		fmt.Print("|" + truncateFillRight(v.Title, taskNum))
 		fmt.Print("|" + truncateFillRight(v.DeadLine, dateNum))
@@ -216,17 +227,17 @@ func colorString(color string, v string) string {
 	return color + v + reset
 }
 
-func rmTask(id int, tasks []Task) error {
+func completeTask(id int, tasks []Task) error {
 	newTasks := make([]Task, 0, 0)
 	for _, v := range tasks {
-		if id != v.Id {
-			newTasks = append(newTasks, v)
-			continue
+		if id == v.Id {
+			v.Completed = true
+			fmt.Println(colorString(red, "-- Completed --"))
+			printOneTask(v.Id, v.Title, v.DeadLine)
 		}
-		fmt.Println(colorString(red, "-- REMOVE --"))
-		printOneTask(v.Id, v.Title, v.DeadLine)
+		newTasks = append(newTasks, v)
 	}
-	if len(tasks) == len(newTasks) {
+	if len(newTasks) == 0 {
 		return errors.New("Not found id: " + strconv.Itoa(id))
 	}
 	return writeTask(Tasks{newTasks})
