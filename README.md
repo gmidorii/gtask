@@ -1,1 +1,29 @@
-## GTask
+# GTask
+
+## Overview
+Gtask is cli task manager.
+
+## HowTo
+### Confirm Task
+```
+% gtask p
+-------------------------------------------------------------
+|id |title                              |date           |c  |
+-------------------------------------------------------------
+|1  |Task                               |2017/02/05     |-  |
+-------------------------------------------------------------
+```
+confirm all task(is completed)
+```
+% gtask p -c true
+```
+
+### Append Task
+```
+% gtask in -t [Task name] -d [in deadline days]
+```
+
+### Complete Task
+```
+% gtask fi -i [id]
+```
