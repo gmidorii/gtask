@@ -3,6 +3,11 @@
 ## Overview
 Gtask is cli task manager.
 
+## Build
+```
+go build main.go
+```
+
 ## HowTo
 ### Confirm Task
 ```
