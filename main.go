@@ -10,8 +10,6 @@ import (
 	"os"
 	"strconv"
 
-	"time"
-
 	"github.com/mattn/go-runewidth"
 	"github.com/urfave/cli"
 )
@@ -53,8 +51,6 @@ type Task struct {
 
 func main() {
 	// Flag
-	var fTask string
-	var fDays int
 	var fId int
 	var fComp bool
 
@@ -65,7 +61,7 @@ func main() {
 	app.Usage = "Task management"
 	app.Version = "0.1"
 
-	tasks, err := readTask(taskfile)
+	tasks, err := ReadTask(taskfile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,30 +71,15 @@ func main() {
 			Usage: "add Task",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:        "t",
-					Value:       "Task",
-					Destination: &fTask,
+					Name:  "t",
+					Value: "Task",
 				},
 				cli.IntFlag{
-					Name:        "d",
-					Value:       -1,
-					Destination: &fDays,
+					Name:  "d",
+					Value: -1,
 				},
 			},
-			Action: func(c *cli.Context) error {
-				if fDays == -1 {
-					// default day is (plus) 3
-					fDays = 3
-				}
-				date := generateDate(fDays, layout)
-				appendTask(&tasks, fTask, date)
-
-				writeTask(tasks)
-				if err != nil {
-					return err
-				}
-				return nil
-			},
+			Action: Write,
 		},
 		{
 			Name:  "fi",
@@ -136,7 +117,9 @@ func main() {
 	app.Run(os.Args)
 }
 
-func readTask(file string) (Tasks, error) {
+// ReadTask return struct Tasks
+// read 'json' file
+func ReadTask(file string) (Tasks, error) {
 	fp, err := os.Open(file)
 	if err != nil {
 		return Tasks{}, err
@@ -153,26 +136,9 @@ func readTask(file string) (Tasks, error) {
 	return tasks, err
 }
 
-func appendTask(tasks *Tasks, title string, deadline string) {
-	var id int
-	if taskSlice := tasks.Tasks; len(taskSlice) != 0 {
-		id = tasks.Tasks[len(tasks.Tasks)-1].Id + 1
-	} else {
-		id = 1
-	}
-	task := Task{
-		Id:        id,
-		Title:     title,
-		DeadLine:  deadline,
-		Completed: false,
-	}
-
-	tasks.Tasks = append(tasks.Tasks, task)
-	fmt.Println(colorString(blue, "-- Append --"))
-	printOneTask(id, title, deadline)
-}
-
-func writeTask(tasks Tasks) error {
+// WriteTask
+// write task to 'json' file
+func WriteTask(tasks Tasks) error {
 	fp, err := os.Create(taskfile)
 	if err != nil {
 		return err
@@ -189,6 +155,14 @@ func writeTask(tasks Tasks) error {
 		return err
 	}
 	return writer.Flush()
+}
+
+// PrintOneTask
+// print a task with status
+func PrintOneTask(id int, title string, deadline string) {
+	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
+	fmt.Println(colorString(cyan, "title: ") + title)
+	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
 
 func printTasks(tasks Tasks, completed bool) {
@@ -233,28 +207,17 @@ func completeTask(id int, tasks []Task) error {
 		if id == v.Id {
 			v.Completed = true
 			fmt.Println(colorString(red, "-- Completed --"))
-			printOneTask(v.Id, v.Title, v.DeadLine)
+			PrintOneTask(v.Id, v.Title, v.DeadLine)
 		}
 		newTasks = append(newTasks, v)
 	}
 	if len(newTasks) == 0 {
 		return errors.New("Not found id: " + strconv.Itoa(id))
 	}
-	return writeTask(Tasks{newTasks})
-}
-
-func printOneTask(id int, title string, deadline string) {
-	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
-	fmt.Println(colorString(cyan, "title: ") + title)
-	fmt.Println(colorString(cyan, "date:  ") + deadline)
+	return WriteTask(Tasks{newTasks})
 }
 
 func truncateFillRight(s string, w int) string {
 	s = runewidth.Truncate(s, w, "..")
 	return runewidth.FillRight(s, w)
-}
-
-func generateDate(plusDays int, layout string) string {
-	now := time.Now().AddDate(0, 0, plusDays)
-	return now.Format(layout)
 }
