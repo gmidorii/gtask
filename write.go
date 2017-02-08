@@ -7,10 +7,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Date Layout
+const layout = "2006/01/02"
+
 func write(c *cli.Context) error {
 	fTask := c.String("t")
 	fDays := c.Int("d")
-	tasks, err := ReadTask(taskfile)
+	tasks, err := readTasks(file)
 	if err != nil {
 		return err
 	}
@@ -22,7 +25,7 @@ func write(c *cli.Context) error {
 	date := generateDate(fDays, layout)
 	appendTask(&tasks, fTask, date)
 
-	WriteTask(tasks)
+	writeTasks(tasks)
 	if err != nil {
 		return err
 	}
@@ -50,5 +53,5 @@ func appendTask(tasks *Tasks, title string, deadline string) {
 
 	tasks.Tasks = append(tasks.Tasks, task)
 	fmt.Println(colorString(blue, "-- Append --"))
-	PrintOneTask(id, title, deadline)
+	printOneTask(id, title, deadline)
 }

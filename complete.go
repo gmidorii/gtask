@@ -12,7 +12,7 @@ import (
 
 func complete(c *cli.Context) error {
 	fId := c.Int("i")
-	tasks, err := ReadTask(taskfile)
+	tasks, err := readTasks(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,12 +28,12 @@ func completeTask(id int, tasks []Task) error {
 		if id == v.Id {
 			v.Completed = true
 			fmt.Println(colorString(red, "-- Completed --"))
-			PrintOneTask(v.Id, v.Title, v.DeadLine)
+			printOneTask(v.Id, v.Title, v.DeadLine)
 		}
 		newTasks = append(newTasks, v)
 	}
 	if len(newTasks) == 0 {
 		return errors.New("Not found id: " + strconv.Itoa(id))
 	}
-	return WriteTask(Tasks{newTasks})
+	return writeTasks(Tasks{newTasks})
 }

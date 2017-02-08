@@ -17,23 +17,7 @@ const red = "\u001b[31m"
 const blue = "\u001b[34m"
 const reset = "\u001b[0m"
 
-// Date Layout
-const layout = "2006/01/02"
-
-// Completed
-const comp = "o"
-const notComp = "-"
-
-var taskfile = "./tasks/task.json"
-
-var (
-	idNum        = 3
-	taskNum      = 35
-	dateNum      = 15
-	completedNum = 3
-)
-
-var lineNum = idNum + taskNum + dateNum + completedNum + 5
+var file = "./tasks/task.json"
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -102,7 +86,7 @@ func main() {
 
 // ReadTask return struct Tasks
 // read 'json' file
-func ReadTask(file string) (Tasks, error) {
+func readTasks(file string) (Tasks, error) {
 	fp, err := os.Open(file)
 	if err != nil {
 		return Tasks{}, err
@@ -121,8 +105,8 @@ func ReadTask(file string) (Tasks, error) {
 
 // WriteTask
 // write task to 'json' file
-func WriteTask(tasks Tasks) error {
-	fp, err := os.Create(taskfile)
+func writeTasks(tasks Tasks) error {
+	fp, err := os.Create(file)
 	if err != nil {
 		return err
 	}
@@ -142,7 +126,7 @@ func WriteTask(tasks Tasks) error {
 
 // PrintOneTask
 // print a task with status
-func PrintOneTask(id int, title string, deadline string) {
+func printOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
 	fmt.Println(colorString(cyan, "title: ") + title)
 	fmt.Println(colorString(cyan, "date:  ") + deadline)

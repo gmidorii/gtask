@@ -8,9 +8,22 @@ import (
 	"github.com/urfave/cli"
 )
 
+var (
+	idNum        = 3
+	taskNum      = 35
+	dateNum      = 15
+	completedNum = 3
+)
+
+var lineNum = idNum + taskNum + dateNum + completedNum + 5
+
+// Completed
+const comp = "o"
+const notComp = "-"
+
 func print(c *cli.Context) error {
 	fComp := c.Bool("c")
-	tasks, err := ReadTask(taskfile)
+	tasks, err := readTasks(file)
 	if err != nil {
 		return err
 	}
