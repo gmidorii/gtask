@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -192,22 +191,6 @@ func printLine(num int) {
 
 func colorString(color string, v string) string {
 	return color + v + reset
-}
-
-func completeTask(id int, tasks []Task) error {
-	newTasks := make([]Task, 0, 0)
-	for _, v := range tasks {
-		if id == v.Id {
-			v.Completed = true
-			fmt.Println(colorString(red, "-- Completed --"))
-			PrintOneTask(v.Id, v.Title, v.DeadLine)
-		}
-		newTasks = append(newTasks, v)
-	}
-	if len(newTasks) == 0 {
-		return errors.New("Not found id: " + strconv.Itoa(id))
-	}
-	return WriteTask(Tasks{newTasks})
 }
 
 func truncateFillRight(s string, w int) string {
