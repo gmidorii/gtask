@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strconv"
 
-	"github.com/mattn/go-runewidth"
 	"github.com/urfave/cli"
 )
 
@@ -59,10 +57,6 @@ func main() {
 	app.Usage = "Task management"
 	app.Version = "0.1"
 
-	tasks, err := ReadTask(taskfile)
-	if err != nil {
-		log.Fatal(err)
-	}
 	app.Commands = []cli.Command{
 		{
 			Name:  "in",
@@ -100,10 +94,7 @@ func main() {
 					Destination: &fComp,
 				},
 			},
-			Action: func(c *cli.Context) error {
-				printTasks(tasks, fComp)
-				return nil
-			},
+			Action: print,
 		},
 	}
 	app.Run(os.Args)
@@ -157,43 +148,6 @@ func PrintOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
 
-func printTasks(tasks Tasks, completed bool) {
-	printLine(lineNum)
-	fmt.Print("|" + cyan + truncateFillRight("id", idNum) + reset + "|")
-	fmt.Print(cyan + truncateFillRight("title", taskNum) + reset + "|")
-	fmt.Print(cyan + truncateFillRight("date", dateNum) + reset + "|")
-	fmt.Print(cyan + truncateFillRight("c", completedNum) + reset)
-	fmt.Println("|")
-	printLine(lineNum)
-	for _, v := range tasks.Tasks {
-		if completed == false && v.Completed == true {
-			continue
-		}
-		fmt.Print("|" + truncateFillRight(strconv.Itoa(v.Id), idNum))
-		fmt.Print("|" + truncateFillRight(v.Title, taskNum))
-		fmt.Print("|" + truncateFillRight(v.DeadLine, dateNum))
-		if v.Completed {
-			fmt.Print("|" + truncateFillRight(comp, completedNum))
-		} else {
-			fmt.Print("|" + truncateFillRight(notComp, completedNum))
-		}
-		fmt.Println("|")
-	}
-	printLine(lineNum)
-}
-
-func printLine(num int) {
-	for i := 0; i < num; i++ {
-		fmt.Print("-")
-	}
-	fmt.Println()
-}
-
 func colorString(color string, v string) string {
 	return color + v + reset
-}
-
-func truncateFillRight(s string, w int) string {
-	s = runewidth.Truncate(s, w, "..")
-	return runewidth.FillRight(s, w)
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"fmt"
 	"time"
 
@@ -14,7 +12,7 @@ func write(c *cli.Context) error {
 	fDays := c.Int("d")
 	tasks, err := ReadTask(taskfile)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if fDays == -1 {
