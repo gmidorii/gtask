@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Write(c *cli.Context) error {
+func write(c *cli.Context) error {
 	fTask := c.String("t")
 	fDays := c.Int("d")
 	tasks, err := ReadTask(taskfile)

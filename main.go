@@ -51,7 +51,6 @@ type Task struct {
 
 func main() {
 	// Flag
-	var fId int
 	var fComp bool
 
 	app := cli.NewApp()
@@ -79,24 +78,18 @@ func main() {
 					Value: -1,
 				},
 			},
-			Action: Write,
+			Action: write,
 		},
 		{
 			Name:  "fi",
 			Usage: "finished task",
 			Flags: []cli.Flag{
 				cli.IntFlag{
-					Name:        "i",
-					Usage:       "id",
-					Destination: &fId,
+					Name:  "i",
+					Usage: "id",
 				},
 			},
-			Action: func(c *cli.Context) error {
-				if err = completeTask(fId, tasks.Tasks); err != nil {
-					return err
-				}
-				return nil
-			},
+			Action: complete,
 		},
 		{
 			Name:  "p",
