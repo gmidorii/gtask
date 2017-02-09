@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 
+	"time"
+
 	"github.com/urfave/cli"
 )
 
@@ -18,6 +20,9 @@ const blue = "\u001b[34m"
 const reset = "\u001b[0m"
 
 var file = "./tasks/task.json"
+
+// Date Layout
+const layout = "2006/01/02"
 
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -80,6 +85,24 @@ func main() {
 			},
 			Action: print,
 		},
+		{
+			Name:  "u",
+			Usage: "Update Task",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name: "t",
+				},
+				cli.IntFlag{
+					Name:  "d",
+					Value: -1,
+				},
+				cli.IntFlag{
+					Name:  "i",
+					Value: -1,
+				},
+			},
+			Action: update,
+		},
 	}
 	app.Run(os.Args)
 }
@@ -134,4 +157,9 @@ func printOneTask(id int, title string, deadline string) {
 
 func colorString(color string, v string) string {
 	return color + v + reset
+}
+
+func generateDate(plusDays int, layout string) string {
+	now := time.Now().AddDate(0, 0, plusDays)
+	return now.Format(layout)
 }

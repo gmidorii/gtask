@@ -2,13 +2,9 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/urfave/cli"
 )
-
-// Date Layout
-const layout = "2006/01/02"
 
 func write(c *cli.Context) error {
 	fTask := c.String("t")
@@ -30,11 +26,6 @@ func write(c *cli.Context) error {
 		return err
 	}
 	return nil
-}
-
-func generateDate(plusDays int, layout string) string {
-	now := time.Now().AddDate(0, 0, plusDays)
-	return now.Format(layout)
 }
 
 func appendTask(tasks *Tasks, title string, deadline string) {
