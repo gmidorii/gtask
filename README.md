@@ -32,3 +32,9 @@ confirm all task(is completed)
 ```
 % gtask fi -i [id]
 ```
+
+### Update Task
+```
+% gtask u -i [id] -t [Task name] -d [in deadline days]
+```
+
