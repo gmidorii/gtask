@@ -107,7 +107,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-// ReadTask return struct Tasks
+// readTask return struct Tasks
 // read 'json' file
 func readTasks(file string) (Tasks, error) {
 	fp, err := os.Open(file)
@@ -126,7 +126,7 @@ func readTasks(file string) (Tasks, error) {
 	return tasks, err
 }
 
-// WriteTask
+// writeTask
 // write task to 'json' file
 func writeTasks(tasks Tasks) error {
 	fp, err := os.Create(file)
@@ -147,7 +147,7 @@ func writeTasks(tasks Tasks) error {
 	return writer.Flush()
 }
 
-// PrintOneTask
+// printOneTask
 // print a task with status
 func printOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "id:    ") + strconv.Itoa(id))
