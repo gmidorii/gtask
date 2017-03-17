@@ -18,10 +18,12 @@ go build main.go
 |1  |Task                               |2017/02/05     |-  |
 -------------------------------------------------------------
 ```
+
 confirm all task(is completed)
 ```
 % gtask p -c true
 ```
+
 
 ### Append Task
 ```
