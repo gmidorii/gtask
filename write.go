@@ -18,7 +18,7 @@ func write(c *cli.Context) error {
 		// default day is (plus) 3
 		fDays = 3
 	}
-	date := generateDate(fDays, layout)
+	date := generateDate(now, fDays, layout)
 	appendTask(&tasks, fTask, date)
 
 	writeTasks(tasks)

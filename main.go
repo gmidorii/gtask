@@ -21,6 +21,8 @@ const reset = "\u001b[0m"
 
 var file = "./tasks/task.json"
 
+var now = time.Now()
+
 // Date Layout
 const layout = "2006/01/02"
 
@@ -159,7 +161,7 @@ func colorString(color string, v string) string {
 	return color + v + reset
 }
 
-func generateDate(plusDays int, layout string) string {
-	now := time.Now().AddDate(0, 0, plusDays)
-	return now.Format(layout)
+func generateDate(now time.Time, plusDays int, layout string) string {
+	day := now.AddDate(0, 0, plusDays)
+	return day.Format(layout)
 }

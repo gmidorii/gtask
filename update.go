@@ -25,7 +25,7 @@ func update(c *cli.Context) error {
 				old.Title = fTask
 			}
 			if fDays != -1 {
-				old.DeadLine = generateDate(fDays, layout)
+				old.DeadLine = generateDate(now, fDays, layout)
 			}
 		}
 		new = append(new, old)
