@@ -14,3 +14,16 @@ func Test_generateDate(t *testing.T) {
 		t.Log(date)
 	}
 }
+
+func Test_colorString(t *testing.T) {
+	cyan := "\u001b[36m"
+	reset := "\u001b[0m"
+
+	v := "string"
+	str := colorString(cyan, v)
+
+	if str != cyan + v + reset {
+		t.Error("Fail to create string")
+		t.Log(v)
+	}
+}
