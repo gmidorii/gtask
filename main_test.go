@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 	"time"
+	"strconv"
 )
 
 func Test_generateDate(t *testing.T) {
@@ -25,5 +26,22 @@ func Test_colorString(t *testing.T) {
 	if str != cyan + v + reset {
 		t.Error("Fail to create string")
 		t.Log(v)
+	}
+}
+
+func Test_readTask(t *testing.T) {
+	file := "./test/read.json"
+	tasks, err := readTasks(file)
+	if err != nil {
+		t.Error("Fail to run func")
+		t.Log(err)
+	}
+	if len(tasks.Tasks) != 1 {
+		t.Error("Unexpected read number of task: " + strconv.Itoa(len(tasks.Tasks)))
+	}
+	task := tasks.Tasks[0]
+	if task.Id != 1 || task.Completed != false || task.DeadLine != "2017/03/19" || task.Title != "Hoge" {
+		t.Error("Unexpected task value")
+		t.Log(task)
 	}
 }
