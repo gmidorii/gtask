@@ -40,3 +40,7 @@ confirm all task(is completed)
 % gtask u -i [id] -t [Task name] -d [in deadline days]
 ```
 
+### plans
+- post to slack
+- improve task view
+
