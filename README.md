@@ -43,4 +43,5 @@ confirm all task(is completed)
 ### plans
 - post to slack
 - improve task view
+- improve command interface
 

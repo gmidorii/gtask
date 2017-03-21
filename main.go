@@ -19,7 +19,7 @@ const red = "\u001b[31m"
 const blue = "\u001b[34m"
 const reset = "\u001b[0m"
 
-var file = "./tasks/task.json"
+const file = "./tasks/task.json"
 
 var now = time.Now()
 
@@ -157,6 +157,8 @@ func printOneTask(id int, title string, deadline string) {
 	fmt.Println(colorString(cyan, "date:  ") + deadline)
 }
 
+// colorString retur color string
+// add color code
 func colorString(color string, v string) string {
 	return color + v + reset
 }
