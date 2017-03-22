@@ -50,7 +50,7 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:  "in",
+			Name:  "add",
 			Usage: "add Task",
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -65,7 +65,7 @@ func main() {
 			Action: write,
 		},
 		{
-			Name:  "fi",
+			Name:  "finish",
 			Usage: "finished task",
 			Flags: []cli.Flag{
 				cli.IntFlag{
@@ -76,7 +76,7 @@ func main() {
 			Action: complete,
 		},
 		{
-			Name:  "p",
+			Name:  "print",
 			Usage: "Print Task",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
@@ -88,7 +88,7 @@ func main() {
 			Action: print,
 		},
 		{
-			Name:  "u",
+			Name:  "update",
 			Usage: "Update Task",
 			Flags: []cli.Flag{
 				cli.StringFlag{

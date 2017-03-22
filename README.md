@@ -21,23 +21,23 @@ go build main.go
 
 confirm all task(is completed)
 ```
-% gtask p -c true
+% gtask print -c true
 ```
 
 
 ### Append Task
 ```
-% gtask in -t [Task name] -d [in deadline days]
+% gtask add -t [Task name] -d [in deadline days]
 ```
 
 ### Complete Task
 ```
-% gtask fi -i [id]
+% gtask finish -i [id]
 ```
 
 ### Update Task
 ```
-% gtask u -i [id] -t [Task name] -d [in deadline days]
+% gtask update -i [id] -t [Task name] -d [in deadline days]
 ```
 
 ### plans
