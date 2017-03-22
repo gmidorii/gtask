@@ -105,6 +105,11 @@ func main() {
 			},
 			Action: update,
 		},
+		{
+			Name: "post",
+			Usage: "Slack post",
+			Action: post,
+		},
 	}
 	app.Run(os.Args)
 }

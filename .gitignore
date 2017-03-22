@@ -15,3 +15,6 @@ gtask
 
 tasks/*
 !.gitkeep
+
+# setting file
+config.toml
