@@ -6,7 +6,12 @@ import (
 	"encoding/json"
 	"bytes"
 	"github.com/BurntSushi/toml"
+	"fmt"
 )
+
+const configFile = "config.toml"
+const notCompleted = "🔁"
+const completed = "☑"
 
 type SlackType struct{
 	Text string `json:"text"`
@@ -22,13 +27,29 @@ type SlackConfig struct {
 
 func post(c *cli.Context) error {
 	var config Config
-	_, err := toml.DecodeFile("config.toml", &config)
+	_, err := toml.DecodeFile(configFile, &config)
 	if err != nil {
 		return err
 	}
 
 
-	slack := SlackType{Text: "Test Text"}
+	tasks, err := readTasks(file)
+	if err != nil {
+		return err
+	}
+
+	var textC string
+	var textNC string
+	for _, v := range tasks.Tasks {
+		if v.Completed {
+			textC += notCompleted + " " + v.Title + "\n"
+			continue
+		}
+		textNC += completed + " " + v.Title + "\n"
+	}
+	fmt.Println(textC)
+	fmt.Println(textNC)
+	slack := SlackType{Text: textC + "\n\n" + textNC}
 	body, err := json.Marshal(slack)
 	if err != nil {
 		return err
