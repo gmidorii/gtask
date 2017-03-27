@@ -1,19 +1,21 @@
 package main
 
 import (
-	"net/http"
-	"github.com/urfave/cli"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"net/http"
+
 	"github.com/BurntSushi/toml"
-	"fmt"
+	"github.com/urfave/cli"
+	"log"
 )
 
 const configFile = "config.toml"
-const notCompleted = "🔁"
-const completed = "☑"
+const doing = "🔁"
+const done = "☑"
+const NEWLINE = "\n"
 
-type SlackType struct{
+type SlackType struct {
 	Text string `json:"text"`
 }
 
@@ -32,24 +34,38 @@ func post(c *cli.Context) error {
 		return err
 	}
 
-
 	tasks, err := readTasks(file)
 	if err != nil {
 		return err
 	}
 
-	var textC string
-	var textNC string
+	var bufferDo bytes.Buffer
+	var bufferDone bytes.Buffer
 	for _, v := range tasks.Tasks {
 		if v.Completed {
-			textC += notCompleted + " " + v.Title + "\n"
-			continue
+			bufferDo.WriteString(doing)
+			bufferDo.WriteString(" ")
+			bufferDo.WriteString(v.Title)
+			bufferDo.WriteString(NEWLINE)
+		} else {
+			bufferDone.WriteString(done)
+			bufferDone.WriteString(" ")
+			bufferDone.WriteString(v.Title)
+			bufferDone.WriteString(NEWLINE)
 		}
-		textNC += completed + " " + v.Title + "\n"
 	}
-	fmt.Println(textC)
-	fmt.Println(textNC)
-	slack := SlackType{Text: textC + "\n\n" + textNC}
+	log.Println(bufferDo.String())
+	log.Println(bufferDone.String())
+	slack := SlackType{
+		Text: "*Doing*" +
+			NEWLINE +
+			bufferDo.String() +
+			NEWLINE +
+			NEWLINE +
+			"*Completed*" +
+			NEWLINE +
+			bufferDone.String(),
+	}
 	body, err := json.Marshal(slack)
 	if err != nil {
 		return err
