@@ -55,10 +55,12 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "t",
+					Usage: "Task Title",
 					Value: "Task",
 				},
 				cli.IntFlag{
 					Name:  "d",
+					Usage: "Deadline num from today",
 					Value: -1,
 				},
 			},
@@ -81,7 +83,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:        "c",
-					Usage:       "completed flag",
+					Usage:       "Completed flag",
 					Destination: &fComp,
 				},
 			},
@@ -92,22 +94,25 @@ func main() {
 			Usage: "Update Task",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name: "t",
+					Name:  "t",
+					Usage: "Task Title",
 				},
 				cli.IntFlag{
 					Name:  "d",
+					Usage: "Deadline num from today",
 					Value: -1,
 				},
 				cli.IntFlag{
 					Name:  "i",
+					Usage: "Task id",
 					Value: -1,
 				},
 			},
 			Action: update,
 		},
 		{
-			Name: "post",
-			Usage: "Slack post",
+			Name:   "post",
+			Usage:  "Slack post",
 			Action: post,
 		},
 	}
