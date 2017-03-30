@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"log"
+
 	"github.com/BurntSushi/toml"
 	"github.com/urfave/cli"
-	"log"
 )
 
 const configFile = "config.toml"
@@ -43,26 +44,26 @@ func post(c *cli.Context) error {
 	var bufferDone bytes.Buffer
 	for _, v := range tasks.Tasks {
 		if v.Completed {
-			bufferDo.WriteString(doing)
-			bufferDo.WriteString(" ")
-			bufferDo.WriteString(v.Title)
-			bufferDo.WriteString(NEWLINE)
+			bufferDone = slackText(bufferDone, done, v)
 		} else {
-			bufferDone.WriteString(done)
-			bufferDone.WriteString(" ")
-			bufferDone.WriteString(v.Title)
-			bufferDone.WriteString(NEWLINE)
+			bufferDo = slackText(bufferDo, doing, v)
 		}
 	}
 	log.Println(bufferDo.String())
 	log.Println(bufferDone.String())
 	slack := SlackType{
-		Text: "*Doing*" +
+		Text: "*Task List*" +
+			NEWLINE +
+			"---------------------------------" +
+			NEWLINE +
+			"`Doing`" +
 			NEWLINE +
 			bufferDo.String() +
 			NEWLINE +
 			NEWLINE +
-			"*Completed*" +
+			"---------------------------------" +
+			NEWLINE +
+			"`Completed`" +
 			NEWLINE +
 			bufferDone.String(),
 	}
@@ -86,4 +87,15 @@ func post(c *cli.Context) error {
 	defer res.Body.Close()
 
 	return err
+}
+
+func slackText(buf bytes.Buffer, mark string, v Task) bytes.Buffer {
+	buf.WriteString(mark)
+	buf.WriteString(" ")
+	buf.WriteString(v.Title)
+	buf.WriteString("     `")
+	buf.WriteString(v.DeadLine)
+	buf.WriteString("`")
+	buf.WriteString(NEWLINE)
+	return buf
 }
